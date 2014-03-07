@@ -1,5 +1,11 @@
 var t = require('../tempex');
 
+var addMilliseconds = function(date, millis) {
+  var d = new Date(date);
+  d.setMilliseconds(d.getMilliseconds() + millis);
+  return d;
+}
+
 var longAgo = new Date(1999, 0, 1, 6, 23, 15),
   farInTheFuture = new Date(2023, 4, 7, 11);
 
@@ -39,6 +45,19 @@ describe("occurring once", function() {
                                 longAgo,
                                 farInTheFuture);
     expect(occurrences.length).toBe(2);
+  });
+
+  it("respects the 'to' date given", function() {
+    var aDay = new Date(2014, 6, 5), aDayLater = new Date(2014, 6, 6);
+    var justBeforeTheDayLater = addMilliseconds(aDayLater, -1);
+    var expressions = [ new t.Once(aDay), new t.Once(aDayLater) ];
+
+    var occurrences = t.occurrences(expressions, longAgo, farInTheFuture);
+    expect(occurrences.length).toBe(2);
+
+    occurrences = t.occurrences(expressions, longAgo, justBeforeTheDayLater);
+    expect(occurrences.length).toBe(1);
+
   });
 
 });
