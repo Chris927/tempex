@@ -1,21 +1,33 @@
 (function(exports){
 
-  var Once = function() {};
+  var Once = function(when) {
+    this.when = when;
+  };
   Once.prototype.isOccurring = function(event, aDate) {
     return false;
   };
   exports.Once = Once;
 
-  var Occurrence = function(scheduleElement, when) {
-    this.scheduleElement = scheduleElement;
+  var Occurrence = function(when) {
     this.when = when;
   };
+  Occurrence.prototype.getWhen = function() {
+    return this.when;
+  }
 
-  exports.occurrences = function(scheduleElement) {
-    if (!scheduleElement.expressions || scheduleElement.expressions.length == 0) {
+  exports.nextOccurrence = function() {
+  }
+
+  exports.occurrences = function(expressions) {
+    if (!expressions || expressions.length == 0) {
       return [];
     } else {
-      return [ new Occurrence(scheduleElement, scheduleElement.expressions[0].when) ]
+      var result = [];
+      for (var i = 0; i < expressions.length; i++) {
+        var expr = expressions[i];
+        result.push(new Occurrence(expr.when));
+      }
+      return result;
     }
   };
 
