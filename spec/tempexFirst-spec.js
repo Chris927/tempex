@@ -17,6 +17,6 @@ describe("single event occurring once", function() {
     scheduleElement = { event: event, expressions: [ new t.Once(when) ] };
     var occurrences = t.occurrences( [ new t.Once(when) ], longAgo, farInTheFuture);
     expect(occurrences.length).toBe(1);
-    expect(occurrences[0].getWhen()).toEqual(when);
+    expect(occurrences[0]).toEqual(when);
   });
 });
