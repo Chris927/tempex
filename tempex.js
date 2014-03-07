@@ -18,21 +18,30 @@
   var nextOccurrence = exports.nextOccurrence = function(expressions, onOrAfter) {
     var theNext = null;
     for (var i = 0; i < expressions.length; i++) {
-      var occurrence = expressions[0].nextOccurrence(onOrAfter);
-      if (occurrence < onOrAfter) {
+      var occurrence = expressions[i].nextOccurrence(onOrAfter);
+      if (occurrence && occurrence < onOrAfter) {
         throw "invalid next occurrence: " + occurrence + " is less than " + onOrAfter;
       }
-      if (!theNext || occurrence < theNext) {
+      if (!theNext || occurrence && occurrence < theNext) {
         theNext = occurrence;
       }
     }
     return theNext;
   }
 
-  var beginningOfDay = function(d) {
+  var beginningOfDay = function(date) {
+    var r = new Date(date);
+    r.setHours(0);
+    r.setMinutes(0);
+    r.setSeconds(0);
+    r.setMilliseconds(0);
+    return r;
   }
 
-  var addDays = function(d) {
+  var addDays = function(date, days) {
+    var r = new Date(date);
+    r.setDate(r.getDate() + days);
+    return r;
   }
 
   exports.occurrences = function(expressions, from, to) {
@@ -44,7 +53,7 @@
         console.log("from=" + from);
         occurrence = nextOccurrence(expressions, from);
         console.log("occurrence=" + occurrence);
-        if(occurrence > to) {
+        if(!occurrence || occurrence > to) {
           break;
         }
         result.push(occurrence);

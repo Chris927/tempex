@@ -12,13 +12,33 @@ describe("empty input", function() {
   });
 });
 
-describe("single event occurring once", function() {
+describe("occurring once", function() {
+
   it("occurrs once", function() {
-    var event = { title: "my test event" },
-    when = new Date(2014, 2, 3, 7),
-    scheduleElement = { event: event, expressions: [ new t.Once(when) ] };
+    var when = new Date(2014, 2, 3, 7);
     var occurrences = t.occurrences( [ new t.Once(when) ], longAgo, farInTheFuture);
     expect(occurrences.length).toBe(1);
     expect(occurrences[0]).toEqual(when);
   });
+
+  it("occurrs twice, with two expressions of 'Once'", function() {
+    var aDay = new Date(2014, 2, 4),
+      nextDay = new Date(2014, 2, 5),
+      nextDayButLater = new Date(2014, 2, 5, 6);
+
+    // gives us two occurrences
+    var occurrences = t.occurrences( [ new t.Once(aDay), new t.Once(nextDay) ], longAgo, farInTheFuture);
+    expect(occurrences.length).toBe(2);
+
+    // now we have a third expression, but it falls on the same day as the second; thus we are getting
+    // two occurrences, as we want to know the *DAYS* an event occurrs... if it occurs multiple times on
+    // the same day is not our concern here.
+    occurrences = t.occurrences( [ new t.Once(aDay),
+                                   new t.Once(nextDay),
+                                   new t.Once(nextDayButLater) ],
+                                longAgo,
+                                farInTheFuture);
+    expect(occurrences.length).toBe(2);
+  });
+
 });
