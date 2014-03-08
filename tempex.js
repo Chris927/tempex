@@ -10,10 +10,54 @@
       return null;
     }
   };
-  Once.prototype.isOccurring = function(event, aDate) {
-    return false;
+  Once.prototype.isOccurring = function(aDate) {
+    return beginningOfDay(aDate) == beginningOfDay(this.when);
   };
   exports.Once = Once;
+
+  var DailyAfter = function(firstDay) {
+    this.firstDay = firstDay;
+  };
+  DailyAfter.isOccurring = function(aDate) {
+    return this.firstDay >= beginningOfDay(aDate);
+  };
+  DailyAfter.prototype.nextOccurrence = function(onOrAfter) {
+    if (this.firstDay >= onOrAfter) {
+      return onOrAfter;
+    } else {
+      return this.firstDay;
+    }
+  };
+  exports.DailyAfter = DailyAfter;
+
+  var OnWeekdays = exports.OnWeekdays = function( /* e.g. [ 0, 2, 3 ] for Sun,Tue,Wed */ days) {
+    this.days = days;
+  }
+  OnWeekdays.prototype.isOccurring = function(aDate) {
+    var day = aDate.getDate();
+    for (var i = 0; i < this.days.length; i++) {
+      if (this.days[i] == day) {
+        return true;
+      }
+    }
+    return false;
+  };
+  OnWeekdays.prototype.nextOccurrence = function(onOrAfter) {
+    var onOrAfterDay = onOrAfter.getDay();
+    var daysToAdd = null;
+    for (var i = 0; i < this.days.length; i++) {
+      var deltaUntilDay = this.days[i] - onOrAfterDay;
+      while (deltaUntilDay < 0) {
+        deltaUntilDay += 7;
+      }
+      if (daysToAdd === null) {
+        daysToAdd = deltaUntilDay;
+      } else {
+        daysToAdd = Math.min(daysToAdd, deltaUntilDay);
+      }
+    }
+    return addDays(onOrAfter, daysToAdd);
+  };
 
   var nextOccurrence = exports.nextOccurrence = function(expressions, onOrAfter) {
     var theNext = null;
@@ -50,9 +94,7 @@
     } else {
       var result = [];
       while(from <= to) {
-        console.log("from=" + from);
         occurrence = nextOccurrence(expressions, from);
-        console.log("occurrence=" + occurrence);
         if(!occurrence || occurrence > to) {
           break;
         }
@@ -61,6 +103,10 @@
       }
       return result;
     }
+  };
+
+  exports.helpers = {
+    addDays: addDays
   };
 
 })(typeof exports === 'undefined'? this['TempEx']={}: exports);

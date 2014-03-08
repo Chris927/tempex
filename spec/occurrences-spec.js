@@ -1,4 +1,5 @@
-var t = require('../tempex');
+var t = require('../tempex'),
+  addDays = t.helpers.addDays;
 
 var addMilliseconds = function(date, millis) {
   var d = new Date(date);
@@ -58,6 +59,61 @@ describe("occurring once", function() {
     occurrences = t.occurrences(expressions, longAgo, justBeforeTheDayLater);
     expect(occurrences.length).toBe(1);
 
+  });
+
+});
+
+describe("other temporal expressions", function() {
+
+  var expressions;
+
+  describe("on specific days of the week", function() {
+
+    var now = new Date(2013, 6, 8) /* a Monday */,
+        nextSunday = new Date(2013, 6, 14);
+
+    it("allows certain weekdays", function() {
+      expressions = [ new t.OnWeekdays([ 1, 3 ]) ]; // should occur Mondays and Wednesdays
+
+      // between now (Monday) and Sunday...
+      var occurrences = t.occurrences(expressions, now, nextSunday);
+      // there are two occurrences
+      expect(occurrences.length).toBe(2);
+      expect(occurrences[0]).toEqual(now);
+      expect(occurrences[0].getDay()).toEqual(1);
+      expect(occurrences[1]).toEqual(addDays(now, 2));
+      expect(occurrences[1].getDay()).toEqual(3);
+
+      // between today and coming Monday...
+      occurrences = t.occurrences(expressions, now, addDays(now, 7));
+      // it should occur thrice
+      expect(occurrences.length).toBe(3);
+      expect(occurrences[0]).toEqual(now);
+      expect(occurrences[1]).toEqual(addDays(now, 2));
+      expect(occurrences[2]).toEqual(addDays(now, 7));
+
+      // between today and today (ahem)...
+      occurrences = t.occurrences(expressions, now, now);
+      // there is one occurrence
+      expect(occurrences.length).toBe(1);
+
+      // between tomorrow and Sunday...
+      occurrences = t.occurrences(expressions, addDays(now, 1), nextSunday);
+      // there is one occurrence (Wednesday)
+      expect(occurrences.length).toBe(1);
+      expect(occurrences[0]).toEqual(addDays(now, 2));
+
+      // between today and Sunday in two weeks...
+      occurrences = t.occurrences(expressions, now, addDays(nextSunday, 7));
+
+      // should occur 4 times, i.e. Mon and Wed in both weeks from now
+      expect(occurrences.length).toBe(4);
+      expect(occurrences[0]).toEqual(now);
+      expect(occurrences[1]).toEqual(addDays(now, 2));
+      expect(occurrences[2]).toEqual(addDays(now, 7));
+      expect(occurrences[3]).toEqual(addDays(now, 9));
+
+    });
   });
 
 });
