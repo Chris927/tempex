@@ -116,4 +116,29 @@ describe("other temporal expressions", function() {
     });
   });
 
+  describe("after a specific day", function() {
+
+    var now = new Date(2013, 6, 27)
+        twentyTwoDaysLater = addDays(now, 22);
+
+    it("covers all days in the range, if the specified day is before the range", function() {
+      var occurrences = t.occurrences([ new t.OnOrAfter(addDays(now, -2)) ], now, twentyTwoDaysLater);
+      expect(occurrences.length).toBe(23);
+      expect(occurrences[0]).toEqual(now);
+      expect(occurrences[22]).toEqual(twentyTwoDaysLater);
+    });
+
+    it("occurs once, if the day is the last day of the range", function() {
+      var occurrences = t.occurrences([ new t.OnOrAfter(twentyTwoDaysLater) ], now, twentyTwoDaysLater);
+      expect(occurrences.length).toBe(1);
+      expect(occurrences[0]).toEqual(twentyTwoDaysLater);
+    });
+
+    it("does not occur, if the day is past the range", function() {
+      var occurrences = t.occurrences([ new t.OnOrAfter(addDays(twentyTwoDaysLater, 1)) ], now, twentyTwoDaysLater);
+      expect(occurrences.length).toBe(0);
+    });
+
+  });
+
 });

@@ -15,20 +15,20 @@
   };
   exports.Once = Once;
 
-  var DailyAfter = function(firstDay) {
+  var OnOrAfter = function(firstDay) {
     this.firstDay = firstDay;
   };
-  DailyAfter.isOccurring = function(aDate) {
+  OnOrAfter.isOccurring = function(aDate) {
     return this.firstDay >= beginningOfDay(aDate);
   };
-  DailyAfter.prototype.nextOccurrence = function(onOrAfter) {
+  OnOrAfter.prototype.nextOccurrence = function(onOrAfter) {
     if (this.firstDay >= onOrAfter) {
-      return onOrAfter;
-    } else {
       return this.firstDay;
+    } else {
+      return onOrAfter;
     }
   };
-  exports.DailyAfter = DailyAfter;
+  exports.OnOrAfter = OnOrAfter;
 
   var OnWeekdays = exports.OnWeekdays = function( /* e.g. [ 0, 2, 3 ] for Sun,Tue,Wed */ days) {
     this.days = days;
