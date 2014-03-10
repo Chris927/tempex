@@ -1,6 +1,6 @@
 (function(exports){
 
-  var Once = function(when) {
+  var Once = function Once(when) {
     this.when = when;
   };
   Once.prototype.nextOccurrence = function(onOrAfter) {
@@ -15,11 +15,11 @@
   };
   exports.Once = Once;
 
-  var OnOrAfter = function(firstDay) {
+  var OnOrAfter = function OnOrAfter(firstDay) {
     this.firstDay = firstDay;
   };
-  OnOrAfter.isOccurring = function(aDate) {
-    return this.firstDay >= beginningOfDay(aDate);
+  OnOrAfter.prototype.isOccurring = function(aDate) {
+    return this.firstDay <= beginningOfDay(aDate);
   };
   OnOrAfter.prototype.nextOccurrence = function(onOrAfter) {
     if (this.firstDay >= onOrAfter) {
@@ -30,11 +30,11 @@
   };
   exports.OnOrAfter = OnOrAfter;
 
-  var OnWeekdays = exports.OnWeekdays = function( /* e.g. [ 0, 2, 3 ] for Sun,Tue,Wed */ days) {
+  var OnWeekdays = exports.OnWeekdays = function OnWeekdays( /* e.g. [ 0, 2, 3 ] for Sun,Tue,Wed */ days) {
     this.days = days;
   }
   OnWeekdays.prototype.isOccurring = function(aDate) {
-    var day = aDate.getDate();
+    var day = aDate.getDay();
     for (var i = 0; i < this.days.length; i++) {
       if (this.days[i] == day) {
         return true;
@@ -57,6 +57,57 @@
       }
     }
     return addDays(onOrAfter, daysToAdd);
+  };
+
+  var maxNextOccurrenceOf = function(expressions, onOrAfter) {
+    if (onOrAfter === null) {
+      throw "onOrAfter cannot be null";
+    }
+    var maxNext = null;
+    for (var i = 0; i < expressions.length; i++) {
+      var next = expressions[i].nextOccurrence(onOrAfter);
+      if (next < onOrAfter) {
+        throw("nextOccurrence cannot be smaller than 'onOrAfter'")
+      }
+      if (next === null) {
+        return null; // no next occurrence for this expression, so no maxNext
+      }
+      if (maxNext === null || maxNext < next) {
+        maxNext = next;
+      }
+    }
+    return maxNext;
+  };
+
+  var allAreOccurringOn = function(expressions, when) {
+    if (when === null) {
+      return false;
+    }
+    for (var i = 0; i < expressions.length; i++) {
+      if (!expressions[i].isOccurring(when)) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  var IntersectionOf = function IntersectionOf(expr1, expr2) {
+    this.expressions = [ expr1, expr2 ];
+  };
+  IntersectionOf.prototype.nextOccurrence = function(onOrAfter) {
+    while (true) { // TODO: if expressions never have a day in common, this will be an endless loop!
+      var nextOfAll = maxNextOccurrenceOf(this.expressions, onOrAfter);
+      if (nextOfAll === null) {
+        return null;
+      }
+      if (allAreOccurringOn(this.expressions, nextOfAll)) {
+        return nextOfAll;
+      }
+      onOrAfter = addDays(nextOfAll, 1);
+    }
+  };
+  exports.intersectionOf = function(expr1, expr2) {
+    return new IntersectionOf(expr1, expr2);
   };
 
   var nextOccurrence = exports.nextOccurrence = function(expressions, onOrAfter) {

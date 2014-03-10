@@ -141,4 +141,46 @@ describe("other temporal expressions", function() {
 
   });
 
+  describe("unions", function() {
+
+    var now = new Date(2015, 2, 26), // a Thursday
+        twoWeeksFromNow = addDays(now, 14);
+
+    it("occurs on all Wednesdays and every day from two weeks from now", function() {
+      var expressions = [ new t.OnWeekdays([3]), new t.OnOrAfter(twoWeeksFromNow) ];
+      var occurrences = t.occurrences( expressions, now, addDays(twoWeeksFromNow, 6));
+      expect(occurrences.length).toBe(9);
+      expect(occurrences[0]).toEqual(new Date(2015, 3, 1)); // next week Wednesday
+      expect(occurrences[1]).toEqual(new Date(2015, 3, 8)); // ... and the Wednesday after that
+      expect(occurrences[2]).toEqual(twoWeeksFromNow);
+      expect(occurrences[3]).toEqual(addDays(twoWeeksFromNow, 1));
+      expect(occurrences[4]).toEqual(addDays(twoWeeksFromNow, 2));
+      expect(occurrences[5]).toEqual(addDays(twoWeeksFromNow, 3));
+      expect(occurrences[6]).toEqual(addDays(twoWeeksFromNow, 4));
+      expect(occurrences[7]).toEqual(addDays(twoWeeksFromNow, 5));
+      expect(occurrences[8]).toEqual(addDays(twoWeeksFromNow, 6)); // that's the last day of the range, and another Wednesday
+    });
+
+  });
+
+  describe("intersections", function() {
+
+    var now = new Date(2014, 7, 2), // a Saturday
+        inTwoWeeks = addDays(now, 14),
+        inFourWeeks = addDays(inTwoWeeks, 14);
+
+    it("ensure occurrences when both temporal expressions occur", function() {
+      var fromTwoWeeks = new t.OnOrAfter(inTwoWeeks),
+          saturdaysAndSundays = new t.OnWeekdays( [ 6, 0 ]);
+      var intersection = t.intersectionOf(fromTwoWeeks, saturdaysAndSundays);
+      var occurrences = t.occurrences( [ intersection ], now, inFourWeeks);
+      expect(occurrences.length).toBe(5);
+      expect(occurrences[0]).toEqual(inTwoWeeks);
+      expect(occurrences[1]).toEqual(addDays(inTwoWeeks, 1));
+      expect(occurrences[2]).toEqual(addDays(inTwoWeeks, 7));
+      expect(occurrences[3]).toEqual(addDays(inTwoWeeks, 8));
+      expect(occurrences[4]).toEqual(addDays(inTwoWeeks, 14));
+    });
+  });
+
 });
