@@ -158,6 +158,32 @@ describe("other temporal expressions", function() {
     });
   });
 
+  describe("on specific day of the month", function() {
+
+    var now = new Date(2013, 11, 15), oneYearFromNow = addDays(now, 365);
+
+    it("matches the first of the month", function() {
+      var expression = t.dayInMonth(1);
+      var occurrences = t.occurrences([ expression ], now, oneYearFromNow);
+      expect(occurrences.length).toBe(12);
+      expect(occurrences[0]).toEqual(new Date(2014, 0, 1));
+      expect(occurrences[1]).toEqual(new Date(2014, 1, 1));
+      expect(occurrences[11]).toEqual(new Date(2014, 11, 1));
+    });
+
+    it("matches the last of the month", function() {
+      var expression = t.dayInMonth(31);
+      var occurrences = t.occurrences([ expression ], now, oneYearFromNow);
+      expect(occurrences.length).toBe(12);
+      expect(occurrences[0]).toEqual(new Date(2013, 11, 31));
+      expect(occurrences[1]).toEqual(new Date(2014, 0, 31));
+      expect(occurrences[2]).toEqual(new Date(2014, 1, 31)); // this is actually March 3rd 2014!
+      expect(occurrences[3]).toEqual(new Date(2014, 2, 31));
+      expect(occurrences[11]).toEqual(new Date(2014, 10, 31)); // this is the 1st of Dec 2014!
+    });
+
+  });
+
   describe("unions", function() {
 
     var now = new Date(2015, 2, 26), // a Thursday

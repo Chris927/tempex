@@ -136,6 +136,21 @@
     return new InMonths(months);
   };
 
+  var DayInMonth = function DayInMonth(day) {
+    this.day = day;
+  }
+  DayInMonth.prototype.nextOccurrence = function(onOrAfter) {
+    if (onOrAfter.getDate() <= this.day) {
+      return addDays(onOrAfter, this.day - onOrAfter.getDate());
+    } else {
+      var next = addMonths(beginningOfMonth(onOrAfter), 1);
+      next.setDate(this.day);
+      return next;
+    }
+  };
+  exports.dayInMonth = function(day) {
+    return new DayInMonth(day);
+  }
   var maxNextOccurrenceOf = function(expressions, onOrAfter) {
     if (onOrAfter === null) {
       throw "onOrAfter cannot be null";
