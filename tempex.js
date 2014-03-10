@@ -30,6 +30,11 @@
       return onOrAfter;
     }
   };
+
+  /**
+   * Specifies an expression that matches a day and all days after that day.
+   * @param {Date} firstDay - The first day to match
+   */
   exports.onOrAfter = function(firstDay) {
     return new OnOrAfter(firstDay);
   }
@@ -62,6 +67,12 @@
     }
     return addDays(onOrAfter, daysToAdd);
   };
+  /**
+   * Specifies an expression that matches days in the week, e.g. Mondays and
+   * Wednesday, but not all other week days.
+   * @param {Array} days - Array of integers describing the days of the week,
+   * e.g. [0, 2, 3] will represent Sundays, Tuesdays and Wednesdays
+   */
   exports.onWeekdays = function(days /* e.g. [ 0, 2, 3 ] for Sun,Tue,Wed */) {
     return new OnWeekdays(days);
   }
