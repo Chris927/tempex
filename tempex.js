@@ -1,5 +1,28 @@
 (function(exports){
 
+  var beginningOfMonth = function(date) {
+    var r = beginningOfDay(date);
+    r.setDate(1);
+    return r;
+  };
+
+  /** Warning: only safe to use if day of month is less than 28...
+   */
+  var addMonths = function(date, months) {
+    var d = new Date(date);
+    d.setMonth(date.getMonth() + months);
+    return d;
+  };
+
+  var beginningOfDay = function(date) {
+    var r = new Date(date);
+    r.setHours(0);
+    r.setMinutes(0);
+    r.setSeconds(0);
+    r.setMilliseconds(0);
+    return r;
+  }
+
   var Once = function Once(when) {
     this.when = when;
   };
@@ -79,6 +102,39 @@
   exports.onWeekdays = function(days /* e.g. [ 0, 2, 3 ] for Sun,Tue,Wed */) {
     return new OnWeekdays(days);
   }
+  
+  /**
+   * 'rolling over' means to add 12 to each month in months that's less than month...
+   */
+  var getMonthsRolledOver = function(months, month) {
+    var result = [];
+    for (var i = 0; i < months.length; i++) {
+      var rolledOverMonth = months[i] < month ? months[i] + 12 : months[i];
+      result.push(rolledOverMonth);
+    }
+    return result;
+  }
+
+  InMonths = function InMonths(months) {
+    this.months = months;
+  }
+  InMonths.prototype.nextOccurrence = function(onOrAfter) {
+    var month = onOrAfter.getMonth();
+    var firstOfMonth = beginningOfMonth(onOrAfter);
+    var monthsRolledOver = getMonthsRolledOver(this.months, month);
+    var monthsToAdd = Math.min.apply(null, monthsRolledOver) - month;
+    if (monthsToAdd > 0) {
+      return addMonths(firstOfMonth, monthsToAdd);
+    } else {
+      return onOrAfter;
+    }
+  };
+  /** Match one or multiple months.
+   * @param {Array} months - array of integers specifying months to match. 0=January, 1=February, etc.
+   */
+  exports.months = function(months) {
+    return new InMonths(months);
+  };
 
   var maxNextOccurrenceOf = function(expressions, onOrAfter) {
     if (onOrAfter === null) {
@@ -149,19 +205,11 @@
     return theNext;
   }
 
-  var beginningOfDay = function(date) {
-    var r = new Date(date);
-    r.setHours(0);
-    r.setMinutes(0);
-    r.setSeconds(0);
-    r.setMilliseconds(0);
-    return r;
-  }
-
   /** Adds (or subtracts) days from a date given.
    * @param {Date} aDate - the date to add days to
    * @param {int} howMany - the amount of days to add
    */
+  var addDays;
   exports.addDays = addDays = function(date, days) {
     var r = new Date(date);
     r.setDate(r.getDate() + days);

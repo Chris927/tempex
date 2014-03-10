@@ -141,6 +141,23 @@ describe("other temporal expressions", function() {
 
   });
 
+  describe("on specific months", function() {
+    var now = new Date(2014, 3, 3), inOneYear = addDays(now, 365);
+
+    it("occurrs on the months specified", function() {
+      var expression = t.months([2, 3]);
+      occurrences = t.occurrences([ expression ], now, inOneYear);
+      expect(occurrences.length).toEqual(62);
+      expect(occurrences[0]).toEqual(now);
+      expect(occurrences[1]).toEqual(new Date(2014, 3, 4));
+      expect(occurrences[27]).toEqual(new Date(2014, 3, 30)); // until end of April this year
+      expect(occurrences[28]).toEqual(new Date(2015, 2, 1)); // ... and all of March next year
+      expect(occurrences[58]).toEqual(new Date(2015, 2, 31));
+      expect(occurrences[59]).toEqual(new Date(2015, 3, 1)); // ... and the first three days of April next year
+      expect(occurrences[61]).toEqual(new Date(2015, 3, 3));
+    });
+  });
+
   describe("unions", function() {
 
     var now = new Date(2015, 2, 26), // a Thursday
