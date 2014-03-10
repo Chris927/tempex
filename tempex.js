@@ -13,6 +13,10 @@
   Once.prototype.isOccurring = function(aDate) {
     return beginningOfDay(aDate) == beginningOfDay(this.when);
   };
+  /**
+   * Specifies an expression that matches one particular day.
+   * @param {Date} when = the day matched
+   */
   exports.once = function(when) {
     return new Once(when);
   }
@@ -30,7 +34,6 @@
       return onOrAfter;
     }
   };
-
   /**
    * Specifies an expression that matches a day and all days after that day.
    * @param {Date} firstDay - The first day to match
@@ -124,6 +127,10 @@
       onOrAfter = addDays(nextOfAll, 1);
     }
   };
+  /** Specifies an intersection of two expression. Only those days will match this expression that match both (sub) expressions.
+   * @param {expression} expr1 - first expression
+   * @param {expression} expr2 - second expression
+   */
   exports.intersectionOf = function(expr1, expr2) {
     return new IntersectionOf(expr1, expr2);
   };
@@ -151,7 +158,11 @@
     return r;
   }
 
-  var addDays = function(date, days) {
+  /** Adds (or subtracts) days from a date given.
+   * @param {Date} aDate - the date to add days to
+   * @param {int} howMany - the amount of days to add
+   */
+  exports.addDays = addDays = function(date, days) {
     var r = new Date(date);
     r.setDate(r.getDate() + days);
     return r;
@@ -172,10 +183,6 @@
       }
       return result;
     }
-  };
-
-  exports.helpers = {
-    addDays: addDays
   };
 
 })(typeof exports === 'undefined'? this['TempEx']={}: exports);

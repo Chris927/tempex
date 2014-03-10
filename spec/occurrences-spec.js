@@ -1,5 +1,5 @@
 var t = require('../tempex'),
-  addDays = t.helpers.addDays;
+  addDays = t.addDays;
 
 var addMilliseconds = function(date, millis) {
   var d = new Date(date);
