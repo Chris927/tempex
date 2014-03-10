@@ -184,6 +184,39 @@ describe("other temporal expressions", function() {
 
   });
 
+  describe("on specific n-th weekday of the month", function() {
+
+    var now = new Date(2013, 11, 15) /* a Sunday */, oneYearFromNow = addDays(now, 365);
+
+    it("matches the first Monday of the month", function() {
+      var expression = t.dayOfWeekInMonth(1 /* Monday */, 1 /* the first one */);
+      var occurrences = t.occurrences([ expression ], now, oneYearFromNow);
+      expect(occurrences.length).toBe(12);
+      expect(occurrences[0]).toEqual(new Date(2014, 0, 6));
+      expect(occurrences[1]).toEqual(new Date(2014, 1, 3));
+      expect(occurrences[2]).toEqual(new Date(2014, 2, 3));
+      expect(occurrences[3]).toEqual(new Date(2014, 3, 7));
+      expect(occurrences[4]).toEqual(new Date(2014, 4, 5));
+      expect(occurrences[5]).toEqual(new Date(2014, 5, 2));
+      expect(occurrences[6]).toEqual(new Date(2014, 6, 7));
+      expect(occurrences[7]).toEqual(new Date(2014, 7, 4));
+      expect(occurrences[8]).toEqual(new Date(2014, 8, 1));
+      expect(occurrences[9]).toEqual(new Date(2014, 9, 6));
+      expect(occurrences[10]).toEqual(new Date(2014, 10, 3));
+      expect(occurrences[11]).toEqual(new Date(2014, 11, 1));
+    });
+
+    it("matches the 3rd Saturday", function() {
+      var expression = t.dayOfWeekInMonth(6 /* Sat */, 3 /* the third*/);
+      var beginningOfMonth = new Date(2015, 1, 1) /* a Sunday */,
+          endOfMonth = new Date(2015, 1, 28);
+      occurrences = t.occurrences([ expression ], beginningOfMonth, endOfMonth);
+      expect(occurrences.length).toBe(1);
+      expect(occurrences[0]).toEqual(new Date(2015, 1, 21));
+    });
+
+  });
+
   describe("unions", function() {
 
     var now = new Date(2015, 2, 26), // a Thursday

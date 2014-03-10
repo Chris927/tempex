@@ -148,9 +148,38 @@
       return next;
     }
   };
+  /** Matches based on the calendar day in the month
+   * @param {int} day - the Day in the month, e.g. 11 for the 11th day of the month
+   */
   exports.dayInMonth = function(day) {
     return new DayInMonth(day);
   }
+
+  DayOfWeekInMonth = function DayOfWeekInMonth(day, nth) {
+    this.day = day;
+    this.nth = nth;
+  };
+  DayOfWeekInMonth.prototype.nextOccurrence = function(onOrAfter) {
+    var startOfThisMonth = beginningOfMonth(onOrAfter);
+    var daysToSkip = this.day < startOfThisMonth.getDay() ? (7 - startOfThisMonth.getDay()) : 0;
+    var daysToAdd = this.day - addDays(startOfThisMonth, daysToSkip).getDay();
+    daysToAdd += (this.nth - 1) * 7;
+    var targetDateThisMonth = addDays(startOfThisMonth, daysToSkip + daysToAdd);
+    if (targetDateThisMonth < onOrAfter) {
+      return this.nextOccurrence(addMonths(startOfThisMonth, 1));
+    } else {
+      return targetDateThisMonth;
+    }
+  }
+  /** Matches based on the day of the week in the month.
+   * @param {int} day - the day of the week, 0=Sunday, 1=Monday, etc.
+   * @param {int} nth - If 1, it will match the first day (e.g. first Sunday)
+   * of the month, if 2 it will be the second, etc.
+   */
+  exports.dayOfWeekInMonth = function(day, nth) {
+    return new DayOfWeekInMonth(day, nth);
+  };
+
   var maxNextOccurrenceOf = function(expressions, onOrAfter) {
     if (onOrAfter === null) {
       throw "onOrAfter cannot be null";
