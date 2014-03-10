@@ -13,7 +13,9 @@
   Once.prototype.isOccurring = function(aDate) {
     return beginningOfDay(aDate) == beginningOfDay(this.when);
   };
-  exports.Once = Once;
+  exports.once = function(when) {
+    return new Once(when);
+  }
 
   var OnOrAfter = function OnOrAfter(firstDay) {
     this.firstDay = firstDay;

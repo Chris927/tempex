@@ -23,7 +23,7 @@ describe("occurring once", function() {
 
   it("occurrs once", function() {
     var when = new Date(2014, 2, 3, 7);
-    var occurrences = t.occurrences( [ new t.Once(when) ], longAgo, farInTheFuture);
+    var occurrences = t.occurrences( [ t.once(when) ], longAgo, farInTheFuture);
     expect(occurrences.length).toBe(1);
     expect(occurrences[0]).toEqual(when);
   });
@@ -34,15 +34,15 @@ describe("occurring once", function() {
       nextDayButLater = new Date(2014, 2, 5, 6);
 
     // gives us two occurrences
-    var occurrences = t.occurrences( [ new t.Once(aDay), new t.Once(nextDay) ], longAgo, farInTheFuture);
+    var occurrences = t.occurrences( [ t.once(aDay), t.once(nextDay) ], longAgo, farInTheFuture);
     expect(occurrences.length).toBe(2);
 
     // now we have a third expression, but it falls on the same day as the second; thus we are getting
     // two occurrences, as we want to know the *DAYS* an event occurrs... if it occurs multiple times on
     // the same day is not our concern here.
-    occurrences = t.occurrences( [ new t.Once(aDay),
-                                   new t.Once(nextDay),
-                                   new t.Once(nextDayButLater) ],
+    occurrences = t.occurrences( [ t.once(aDay),
+                                   t.once(nextDay),
+                                   t.once(nextDayButLater) ],
                                 longAgo,
                                 farInTheFuture);
     expect(occurrences.length).toBe(2);
@@ -51,7 +51,7 @@ describe("occurring once", function() {
   it("respects the 'to' date given", function() {
     var aDay = new Date(2014, 6, 5), aDayLater = new Date(2014, 6, 6);
     var justBeforeTheDayLater = addMilliseconds(aDayLater, -1);
-    var expressions = [ new t.Once(aDay), new t.Once(aDayLater) ];
+    var expressions = [ t.once(aDay), t.once(aDayLater) ];
 
     var occurrences = t.occurrences(expressions, longAgo, farInTheFuture);
     expect(occurrences.length).toBe(2);
