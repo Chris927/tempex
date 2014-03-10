@@ -94,8 +94,8 @@
   var IntersectionOf = function IntersectionOf(expr1, expr2) {
     this.expressions = [ expr1, expr2 ];
   };
-  IntersectionOf.prototype.nextOccurrence = function(onOrAfter) {
-    while (true) { // TODO: if expressions never have a day in common, this will be an endless loop!
+  IntersectionOf.prototype.nextOccurrence = function(onOrAfter, butNotLaterThan) {
+    while (onOrAfter <= butNotLaterThan) {
       var nextOfAll = maxNextOccurrenceOf(this.expressions, onOrAfter);
       if (nextOfAll === null) {
         return null;
@@ -110,10 +110,10 @@
     return new IntersectionOf(expr1, expr2);
   };
 
-  var nextOccurrence = exports.nextOccurrence = function(expressions, onOrAfter) {
+  var nextOccurrence = exports.nextOccurrence = function(expressions, onOrAfter, butNotLaterThan) {
     var theNext = null;
     for (var i = 0; i < expressions.length; i++) {
-      var occurrence = expressions[i].nextOccurrence(onOrAfter);
+      var occurrence = expressions[i].nextOccurrence(onOrAfter, butNotLaterThan);
       if (occurrence && occurrence < onOrAfter) {
         throw "invalid next occurrence: " + occurrence + " is less than " + onOrAfter;
       }
@@ -145,7 +145,7 @@
     } else {
       var result = [];
       while(from <= to) {
-        occurrence = nextOccurrence(expressions, from);
+        occurrence = nextOccurrence(expressions, from, to);
         if(!occurrence || occurrence > to) {
           break;
         }

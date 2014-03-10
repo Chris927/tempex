@@ -181,6 +181,15 @@ describe("other temporal expressions", function() {
       expect(occurrences[3]).toEqual(addDays(inTwoWeeks, 8));
       expect(occurrences[4]).toEqual(addDays(inTwoWeeks, 14));
     });
+
+    it("produces an empty list of occurrences if there is no overlap", function() {
+      var mondaysAndTuesdays = new t.OnWeekdays([ 1, 2 ]),
+          saturdaysAndSundays = new t.OnWeekdays( [ 6, 0 ]);
+        var intersection = t.intersectionOf(mondaysAndTuesdays, saturdaysAndSundays);
+        var occurrences = t.occurrences( [ intersection ], now, inFourWeeks);
+        expect(occurrences.length).toBe(0);
+    });
+
   });
 
 });
