@@ -73,7 +73,7 @@ describe("other temporal expressions", function() {
         nextSunday = new Date(2013, 6, 14);
 
     it("allows certain weekdays", function() {
-      expressions = [ new t.OnWeekdays([ 1, 3 ]) ]; // should occur Mondays and Wednesdays
+      expressions = [ t.onWeekdays([ 1, 3 ]) ]; // should occur Mondays and Wednesdays
 
       // between now (Monday) and Sunday...
       var occurrences = t.occurrences(expressions, now, nextSunday);
@@ -122,20 +122,20 @@ describe("other temporal expressions", function() {
         twentyTwoDaysLater = addDays(now, 22);
 
     it("covers all days in the range, if the specified day is before the range", function() {
-      var occurrences = t.occurrences([ new t.OnOrAfter(addDays(now, -2)) ], now, twentyTwoDaysLater);
+      var occurrences = t.occurrences([ t.onOrAfter(addDays(now, -2)) ], now, twentyTwoDaysLater);
       expect(occurrences.length).toBe(23);
       expect(occurrences[0]).toEqual(now);
       expect(occurrences[22]).toEqual(twentyTwoDaysLater);
     });
 
     it("occurs once, if the day is the last day of the range", function() {
-      var occurrences = t.occurrences([ new t.OnOrAfter(twentyTwoDaysLater) ], now, twentyTwoDaysLater);
+      var occurrences = t.occurrences([ t.onOrAfter(twentyTwoDaysLater) ], now, twentyTwoDaysLater);
       expect(occurrences.length).toBe(1);
       expect(occurrences[0]).toEqual(twentyTwoDaysLater);
     });
 
     it("does not occur, if the day is past the range", function() {
-      var occurrences = t.occurrences([ new t.OnOrAfter(addDays(twentyTwoDaysLater, 1)) ], now, twentyTwoDaysLater);
+      var occurrences = t.occurrences([ t.onOrAfter(addDays(twentyTwoDaysLater, 1)) ], now, twentyTwoDaysLater);
       expect(occurrences.length).toBe(0);
     });
 
@@ -147,7 +147,7 @@ describe("other temporal expressions", function() {
         twoWeeksFromNow = addDays(now, 14);
 
     it("occurs on all Wednesdays and every day from two weeks from now", function() {
-      var expressions = [ new t.OnWeekdays([3]), new t.OnOrAfter(twoWeeksFromNow) ];
+      var expressions = [ t.onWeekdays([3]), t.onOrAfter(twoWeeksFromNow) ];
       var occurrences = t.occurrences( expressions, now, addDays(twoWeeksFromNow, 6));
       expect(occurrences.length).toBe(9);
       expect(occurrences[0]).toEqual(new Date(2015, 3, 1)); // next week Wednesday
@@ -170,8 +170,8 @@ describe("other temporal expressions", function() {
         inFourWeeks = addDays(inTwoWeeks, 14);
 
     it("ensure occurrences when both temporal expressions occur", function() {
-      var fromTwoWeeks = new t.OnOrAfter(inTwoWeeks),
-          saturdaysAndSundays = new t.OnWeekdays( [ 6, 0 ]);
+      var fromTwoWeeks = t.onOrAfter(inTwoWeeks),
+          saturdaysAndSundays = t.onWeekdays( [ 6, 0 ]);
       var intersection = t.intersectionOf(fromTwoWeeks, saturdaysAndSundays);
       var occurrences = t.occurrences( [ intersection ], now, inFourWeeks);
       expect(occurrences.length).toBe(5);
@@ -183,8 +183,8 @@ describe("other temporal expressions", function() {
     });
 
     it("produces an empty list of occurrences if there is no overlap", function() {
-      var mondaysAndTuesdays = new t.OnWeekdays([ 1, 2 ]),
-          saturdaysAndSundays = new t.OnWeekdays( [ 6, 0 ]);
+      var mondaysAndTuesdays = t.onWeekdays([ 1, 2 ]),
+          saturdaysAndSundays = t.onWeekdays( [ 6, 0 ]);
         var intersection = t.intersectionOf(mondaysAndTuesdays, saturdaysAndSundays);
         var occurrences = t.occurrences( [ intersection ], now, inFourWeeks);
         expect(occurrences.length).toBe(0);

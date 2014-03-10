@@ -30,9 +30,11 @@
       return onOrAfter;
     }
   };
-  exports.OnOrAfter = OnOrAfter;
+  exports.onOrAfter = function(firstDay) {
+    return new OnOrAfter(firstDay);
+  }
 
-  var OnWeekdays = exports.OnWeekdays = function OnWeekdays( /* e.g. [ 0, 2, 3 ] for Sun,Tue,Wed */ days) {
+  var OnWeekdays = function OnWeekdays( /* e.g. [ 0, 2, 3 ] for Sun,Tue,Wed */ days) {
     this.days = days;
   }
   OnWeekdays.prototype.isOccurring = function(aDate) {
@@ -60,6 +62,9 @@
     }
     return addDays(onOrAfter, daysToAdd);
   };
+  exports.onWeekdays = function(days /* e.g. [ 0, 2, 3 ] for Sun,Tue,Wed */) {
+    return new OnWeekdays(days);
+  }
 
   var maxNextOccurrenceOf = function(expressions, onOrAfter) {
     if (onOrAfter === null) {
