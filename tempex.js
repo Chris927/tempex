@@ -1,6 +1,6 @@
 (function(exports){
 
-  var beginningOfMonth = function(date) {
+  var beginningOfMonth = exports.beginningOfMonth = function(date) {
     var r = beginningOfDay(date);
     r.setDate(1);
     return r;
@@ -14,7 +14,7 @@
     return d;
   };
 
-  var beginningOfDay = function(date) {
+  var beginningOfDay = exports.beginningOfDay = function(date) {
     var r = new Date(date);
     r.setHours(0);
     r.setMinutes(0);
