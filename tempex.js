@@ -65,6 +65,27 @@
     return new OnOrAfter(firstDay);
   }
 
+  /**
+   * Specifies an expression that matches a day and all days before that day.
+   * @param {Date} lastDay - The last day to match
+   */
+  var NegationOf = function NegationOf(expr) {
+    this.expr = expr;
+  }
+  NegationOf.prototype.nextOccurrence = function(onOrAfter, butNotLaterThan) {
+    var when = beginningOfDay(onOrAfter);
+    while (when <= butNotLaterThan) {
+      var next = this.expr.nextOccurrence(when, butNotLaterThan);
+      if (next > when)
+        return when;
+      when = addDays(next, 1);
+    }
+    return null;
+  }
+  exports.onOrBefore = function(lastDay) {
+    return new NegationOf(new OnOrAfter(addDays(lastDay, 1)));
+  }
+
   var OnWeekdays = function OnWeekdays( /* e.g. [ 0, 2, 3 ] for Sun,Tue,Wed */ days) {
     this.days = days;
   }

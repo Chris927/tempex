@@ -116,6 +116,31 @@ describe("other temporal expressions", function() {
     });
   });
 
+  describe("before a specific day", function() {
+
+    var now = new Date(2013, 6, 27)
+        twentyTwoDaysLater = addDays(now, 22);
+
+    it("covers all days in the range, if the specified day is after the range", function() {
+      var occurrences = t.occurrences([ t.onOrBefore(addDays(twentyTwoDaysLater, 2)) ], now, twentyTwoDaysLater);
+      expect(occurrences.length).toBe(23);
+      expect(occurrences[0]).toEqual(now);
+      expect(occurrences[22]).toEqual(twentyTwoDaysLater);
+    });
+
+    it("occurs once, if the day is the first day of the range", function() {
+      var occurrences = t.occurrences([ t.onOrBefore(now) ], now, twentyTwoDaysLater);
+      expect(occurrences.length).toBe(1);
+      expect(occurrences[0]).toEqual(now);
+    });
+
+    it("does not occur, if the day is before the range", function() {
+      var occurrences = t.occurrences([ t.onOrBefore(addDays(now, -1)) ], now, twentyTwoDaysLater);
+      expect(occurrences.length).toBe(0);
+    });
+
+  });
+
   describe("after a specific day", function() {
 
     var now = new Date(2013, 6, 27)
