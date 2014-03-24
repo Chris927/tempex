@@ -166,6 +166,23 @@ describe("other temporal expressions", function() {
 
   });
 
+  describe("before and after combined", function() {
+    var now = new Date(2013, 6, 27),
+        threeDaysLater = addDays(now, 3),
+        sixDaysLater = addDays(now, 6),
+        twentyTwoDaysLater = addDays(now, 22);
+
+    it("covers all days in the range, if the specified day is before the range", function() {
+      var expr = t.onOrAfter(threeDaysLater);
+      expr = t.intersectionOf(expr, t.onOrBefore(sixDaysLater));
+      var occurrences = t.occurrences([ expr ], now, twentyTwoDaysLater);
+      expect(occurrences.length).toBe(4);
+      expect(occurrences[0]).toEqual(threeDaysLater);
+      expect(occurrences[3]).toEqual(sixDaysLater);
+    });
+
+  });
+
   describe("on specific months", function() {
     var now = new Date(2014, 3, 3), inOneYear = addDays(now, 365);
 

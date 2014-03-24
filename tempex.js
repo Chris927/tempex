@@ -72,11 +72,14 @@
   var NegationOf = function NegationOf(expr) {
     this.expr = expr;
   }
+  NegationOf.prototype.isOccurring = function(aDate) {
+    return !this.expr.isOccurring(aDate);
+  }
   NegationOf.prototype.nextOccurrence = function(onOrAfter, butNotLaterThan) {
-    var when = beginningOfDay(onOrAfter);
+    var when = onOrAfter;
     while (when <= butNotLaterThan) {
       var next = this.expr.nextOccurrence(when, butNotLaterThan);
-      if (next > when)
+      if (!next || next > when)
         return when;
       when = addDays(next, 1);
     }
@@ -201,18 +204,18 @@
     return new DayOfWeekInMonth(day, nth);
   };
 
-  var maxNextOccurrenceOf = function(expressions, onOrAfter) {
+  var maxNextOccurrenceOf = function(expressions, onOrAfter, butNotLaterThan) {
     if (onOrAfter === null) {
       throw "onOrAfter cannot be null";
     }
     var maxNext = null;
     for (var i = 0; i < expressions.length; i++) {
-      var next = expressions[i].nextOccurrence(onOrAfter);
-      if (next < onOrAfter) {
-        throw("nextOccurrence cannot be smaller than 'onOrAfter'")
-      }
+      var next = expressions[i].nextOccurrence(onOrAfter, butNotLaterThan);
       if (next === null) {
         return null; // no next occurrence for this expression, so no maxNext
+      }
+      if (next < onOrAfter) {
+        throw("nextOccurrence cannot be smaller than 'onOrAfter'")
       }
       if (maxNext === null || maxNext < next) {
         maxNext = next;
@@ -236,9 +239,18 @@
   var IntersectionOf = function IntersectionOf(expr1, expr2) {
     this.expressions = [ expr1, expr2 ];
   };
+  IntersectionOf.prototype.isOccurring = function(aDate) {
+    var i;
+    for (i = 0; i < this.expressions.length; i++) {
+      if (!this.expressions[i].isOccurring(aDate)) {
+        return false;
+      }
+    }
+    return true;
+  };
   IntersectionOf.prototype.nextOccurrence = function(onOrAfter, butNotLaterThan) {
     while (onOrAfter <= butNotLaterThan) {
-      var nextOfAll = maxNextOccurrenceOf(this.expressions, onOrAfter);
+      var nextOfAll = maxNextOccurrenceOf(this.expressions, onOrAfter, butNotLaterThan);
       if (nextOfAll === null) {
         return null;
       }
