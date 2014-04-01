@@ -47,17 +47,17 @@
   var OnSpecificDates = function OnSpecificDates(dates) {
     this.datesSorted = [];
     for (var i = 0; i < dates.length; i++) {
-      this.datesSorted.push(beginningOfDay((dates[i])));
+      this.datesSorted.push(beginningOfDay(dates[i]));
     }
     this.datesSorted.sort(function(a, b) { return a.getTime() > b.getTime() });
   }
   OnSpecificDates.prototype.isOccurring = function(aDate) {
     var day = beginningOfDay(aDate);
     for (var i = 0; i < this.datesSorted.length; i++) {
-      if (day == this.datesSorted[i]) {
+      if (day.getTime() == this.datesSorted[i].getTime()) {
         return true;
       }
-      if (day > this.datesSorted[i]) {
+      if (day < this.datesSorted[i]) {
         return false;
       }
     }
@@ -107,7 +107,8 @@
     this.expr = expr;
   }
   NegationOf.prototype.isOccurring = function(aDate) {
-    return !this.expr.isOccurring(aDate);
+    var result = !this.expr.isOccurring(aDate);
+    return result;
   }
   NegationOf.prototype.nextOccurrence = function(onOrAfter, butNotLaterThan) {
     var when = onOrAfter;
@@ -335,6 +336,9 @@
   }
 
   exports.occurrences = function(expressions, from, to) {
+    if (!from || !(from instanceof Date) || !to || !(to instanceof Date)) {
+      throw "invalid arguments";
+    }
     if (!expressions || expressions.length == 0) {
       return [];
     } else {

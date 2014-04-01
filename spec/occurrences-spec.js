@@ -14,8 +14,6 @@ describe("empty input", function() {
   it("returns an empty list of occurrences", function() {
     var occurrences = t.occurrences(/* temporal expressions */ [], /* from */ new Date(), /* to */ new Date());
     expect(occurrences).toEqual([]);
-    occurrences = t.occurrences(/* temporal expressions */ [])
-    expect(occurrences).toEqual([]);
   });
 });
 
@@ -329,6 +327,21 @@ describe("other temporal expressions", function() {
         expect(occurrences.length).toBe(0);
     });
 
+    it("allows intersection of 'notOnSpecificDates' with 'weekdays'", function() {
+      var today = new Date(2014, 5, 2),
+          comingThursday = addDays(today, 3),
+          comingFriday = addDays(today, 4),
+          comingSaturday = addDays(today, 5),
+          inTwoWeeks = addDays(today, 14);
+      var thursdaysAndFridays = t.onWeekdays( [ 4, 5 ]);
+      var notComingThursday = t.notOnSpecificDates( [ today, comingThursday, comingSaturday ]);
+      var intersection = t.intersectionOf(thursdaysAndFridays, notComingThursday);
+      var occurrences = t.occurrences( [ intersection ], today, inTwoWeeks);
+      expect(occurrences[0]).toEqual(comingFriday);
+      expect(occurrences[1]).toEqual(addDays(comingThursday, 7));
+      expect(occurrences[2]).toEqual(addDays(comingFriday, 7));
+      expect(occurrences.length).toBe(3);
+    });
   });
 
 });
