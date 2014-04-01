@@ -183,6 +183,27 @@ describe("other temporal expressions", function() {
 
   });
 
+  describe("on specific dates", function() {
+    var now = new Date(2014, 3, 3), tomorrow = addDays(now, 1), inTwoWeeks = addDays(now, 14);
+    it("occurrs on those days", function() {
+      var expression = t.onSpecificDates( [ tomorrow ]);
+      var occurrences = t.occurrences([ expression ], now, inTwoWeeks);
+      expect(occurrences.length).toEqual(1);
+      expect(occurrences[0]).toEqual(tomorrow);
+    });
+  });
+
+  describe("not on specific dates", function() {
+    var now = new Date(2014, 3, 3), inTwoWeeks = addDays(now, 14);
+    it("occurrs on all other days", function() {
+      var expression = t.notOnSpecificDates( [ new Date(2014, 3, 4) ]);
+      var occurrences = t.occurrences([ expression ], now, inTwoWeeks);
+      expect(occurrences.length).toEqual(14);
+      expect(occurrences[0]).toEqual(now);
+      expect(occurrences[1]).toEqual(addDays(now, 2));
+    });
+  });
+
   describe("on specific months", function() {
     var now = new Date(2014, 3, 3), inOneYear = addDays(now, 365);
 

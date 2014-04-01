@@ -44,6 +44,40 @@
     return new Once(when);
   }
 
+  var OnSpecificDates = function OnSpecificDates(dates) {
+    this.datesSorted = [];
+    for (var i = 0; i < dates.length; i++) {
+      this.datesSorted.push(beginningOfDay((dates[i])));
+    }
+    this.datesSorted.sort(function(a, b) { return a.getTime() > b.getTime() });
+  }
+  OnSpecificDates.prototype.isOccurring = function(aDate) {
+    var day = beginningOfDay(aDate);
+    for (var i = 0; i < this.datesSorted.length; i++) {
+      if (day == this.datesSorted[i]) {
+        return true;
+      }
+      if (day > this.datesSorted[i]) {
+        return false;
+      }
+    }
+    return false;
+  }
+  OnSpecificDates.prototype.nextOccurrence = function(onOrAfter, butNotLaterThan) {
+    for (var i = 0; i < this.datesSorted.length; i++) {
+      if (this.datesSorted[i] > butNotLaterThan) {
+        return null;
+      }
+      if (this.datesSorted[i] >= onOrAfter) {
+        return this.datesSorted[i];
+      }
+    }
+    return null;
+  }
+  exports.onSpecificDates = function(dates) {
+    return new OnSpecificDates(dates);
+  }
+
   var OnOrAfter = function OnOrAfter(firstDay) {
     this.firstDay = firstDay;
   };
@@ -79,14 +113,20 @@
     var when = onOrAfter;
     while (when <= butNotLaterThan) {
       var next = this.expr.nextOccurrence(when, butNotLaterThan);
-      if (!next || next > when)
+      if (!next || next > when) {
         return when;
+      }
       when = addDays(next, 1);
     }
     return null;
   }
+
   exports.onOrBefore = function(lastDay) {
     return new NegationOf(new OnOrAfter(addDays(lastDay, 1)));
+  }
+
+  exports.notOnSpecificDates = function(dates) {
+    return new NegationOf(new OnSpecificDates(dates));
   }
 
   var OnWeekdays = function OnWeekdays( /* e.g. [ 0, 2, 3 ] for Sun,Tue,Wed */ days) {
