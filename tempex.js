@@ -259,6 +259,7 @@
       }
       onOrAfter = addDays(nextOfAll, 1);
     }
+    return null;
   };
   /** Specifies an intersection of two expression. Only those days will match this expression that match both (sub) expressions.
    * @param {expression} expr1 - first expression
