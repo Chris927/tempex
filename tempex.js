@@ -1,4 +1,6 @@
-(function(exports){
+var isNodeJS = !(typeof exports === 'undefined');
+
+(function(exports, moment) {
 
   var beginningOfMonth = exports.beginningOfMonth = function(date) {
     var r = beginningOfDay(date);
@@ -245,6 +247,29 @@
     return new DayOfWeekInMonth(day, nth);
   };
 
+  function EveryNthWeekFrom(n, day) {
+    this.n = n;
+    this.day = moment(day);
+  }
+  EveryNthWeekFrom.prototype.nextOccurrence = function(onOrAfter) {
+    var until = moment(onOrAfter);
+    var daysDiff = until.diff(this.day, 'days');
+    var weeksDiff = Math.floor(daysDiff / 7);
+    console.log('weeksDiff=' + weeksDiff);
+    if ((weeksDiff % this.n) == 0) {
+      console.log('weeksDiff=' + weeksDiff);
+      return moment(until.toDate()).toDate();
+    } else {
+      var nextWeekFromDay = weeksDiff - (weeksDiff % this.n) + this.n;
+      var firstDayOfNextWeekFromDay = moment(this.day).add(nextWeekFromDay, 'week');
+      return firstDayOfNextWeekFromDay.toDate();
+    }
+  }
+
+  exports.everyNthWeekFrom = function(n, day) {
+    return new EveryNthWeekFrom(n, day);
+  };
+
   var maxNextOccurrenceOf = function(expressions, onOrAfter, butNotLaterThan) {
     if (onOrAfter === null) {
       throw "onOrAfter cannot be null";
@@ -355,4 +380,4 @@
     }
   };
 
-})(typeof exports === 'undefined'? this['TempEx']={}: exports);
+})(isNodeJS ? exports : this['TempEx']={}, isNodeJS ? require('moment') : moment);

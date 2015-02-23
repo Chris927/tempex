@@ -1,0 +1,24 @@
+{
+  "name": "tempex",
+  "version": "0.0.1",
+  "description": "temporal expressions, somehow similar to Martin Fowler's",
+  "main": "tempex.js",
+  "scripts": {
+    "test": "jasmine-node ./spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:chris_o/tempex.git"
+  },
+  "keywords": [
+    "time",
+    "javascript",
+    "temporal",
+    "expressions"
+  ],
+  "author": "Chris Oloff <chris@uber5.com> (https://uber5.com/)",
+  "license": "ISC",
+  "dependencies": {
+    "moment": "^2.9.0"
+  }
+}
