@@ -221,6 +221,11 @@ describe("other temporal expressions", function() {
 
   describe("every n-th week", function() {
     var now = new Date(2013, 11, 15), oneYearFromNow = addDays(now, 365);
+    it("matches every day (for n == 1)", function() {
+      var expression = t.everyNthWeekFrom(1, new Date(2013, 11, 15));
+      occurrences = t.occurrences([ expression ], now, oneYearFromNow);
+      expect(occurrences.length).toEqual(366); // every day
+    })
     it("matches every 2nd week", function() {
       var expression = t.everyNthWeekFrom(2, new Date(2013, 11, 15));
       occurrences = t.occurrences([ expression ], now, oneYearFromNow);
@@ -233,14 +238,28 @@ describe("other temporal expressions", function() {
       expect(occurrences[4]).toEqual(new Date(2013, 11, 19));
       expect(occurrences[5]).toEqual(new Date(2013, 11, 20));
       expect(occurrences[6]).toEqual(new Date(2013, 11, 21)); // ... then no day of week 1
-      expect(occurrences[7]).toEqual(new Date(2013, 11, 29)); // then all weeks of week 2
+      expect(occurrences[7]).toEqual(new Date(2013, 11, 29)); // then all days of week 2
       expect(occurrences[8]).toEqual(new Date(2013, 11, 30));
       expect(occurrences[9]).toEqual(new Date(2013, 11, 31));
       expect(occurrences[10]).toEqual(new Date(2014, 0, 1));
       expect(occurrences[11]).toEqual(new Date(2014, 0, 2));
       expect(occurrences[12]).toEqual(new Date(2014, 0, 3));
       expect(occurrences[13]).toEqual(new Date(2014, 0, 4));
-      // TODO: more here?
+    });
+    it("matches every 2nd week", function() {
+      var expression = t.everyNthWeekFrom(3, new Date(2013, 11, 15));
+      occurrences = t.occurrences([ expression ], now, oneYearFromNow);
+      expect(occurrences.length).toEqual(126);
+      console.log('occurrences', occurrences);
+      expect(occurrences[0]).toEqual(new Date(2013, 11, 15)); // every day of week 0
+      expect(occurrences[1]).toEqual(new Date(2013, 11, 16));
+      expect(occurrences[2]).toEqual(new Date(2013, 11, 17));
+      expect(occurrences[3]).toEqual(new Date(2013, 11, 18));
+      expect(occurrences[4]).toEqual(new Date(2013, 11, 19));
+      expect(occurrences[5]).toEqual(new Date(2013, 11, 20));
+      expect(occurrences[6]).toEqual(new Date(2013, 11, 21));
+      expect(occurrences[7]).toEqual(new Date(2014, 0, 5)); // ... then all days of week 3
+      expect(occurrences[8]).toEqual(new Date(2014, 0, 6)); // ... and so on
     });
   });
 
