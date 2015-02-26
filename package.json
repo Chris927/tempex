@@ -1,6 +1,6 @@
 {
   "name": "tempex",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "temporal expressions, somehow similar to Martin Fowler's",
   "main": "tempex.js",
   "scripts": {
