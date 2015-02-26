@@ -230,7 +230,6 @@ describe("other temporal expressions", function() {
       var expression = t.everyNthWeekFrom(2, new Date(2013, 11, 15));
       occurrences = t.occurrences([ expression ], now, oneYearFromNow);
       expect(occurrences.length).toEqual(184);
-      console.log('occurrences', occurrences);
       expect(occurrences[0]).toEqual(new Date(2013, 11, 15)); // every day of week 0
       expect(occurrences[1]).toEqual(new Date(2013, 11, 16));
       expect(occurrences[2]).toEqual(new Date(2013, 11, 17));
@@ -250,7 +249,6 @@ describe("other temporal expressions", function() {
       var expression = t.everyNthWeekFrom(3, new Date(2013, 11, 15));
       occurrences = t.occurrences([ expression ], now, oneYearFromNow);
       expect(occurrences.length).toEqual(126);
-      console.log('occurrences', occurrences);
       expect(occurrences[0]).toEqual(new Date(2013, 11, 15)); // every day of week 0
       expect(occurrences[1]).toEqual(new Date(2013, 11, 16));
       expect(occurrences[2]).toEqual(new Date(2013, 11, 17));

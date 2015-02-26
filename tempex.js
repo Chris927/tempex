@@ -16,6 +16,11 @@ var isNodeJS = !(typeof exports === 'undefined');
     return d;
   };
 
+  var dateFromArg = function(stringOrDate) {
+    if ((typeof stringOrDate) == 'string') return new Date(stringOrDate);
+    return stringOrDate;
+  }
+
   var beginningOfDay = exports.beginningOfDay = function(date) {
     var r = new Date(date);
     r.setHours(0);
@@ -26,7 +31,7 @@ var isNodeJS = !(typeof exports === 'undefined');
   }
 
   var Once = function Once(when) {
-    this.when = when;
+    this.when = dateFromArg(when);
   };
   Once.prototype.nextOccurrence = function(onOrAfter) {
     if (this.when >= onOrAfter) {
@@ -38,6 +43,7 @@ var isNodeJS = !(typeof exports === 'undefined');
   Once.prototype.isOccurring = function(aDate) {
     return beginningOfDay(aDate) == beginningOfDay(this.when);
   };
+
   /**
    * Specifies an expression that matches one particular day.
    * @param {Date} when = the day matched
@@ -81,7 +87,7 @@ var isNodeJS = !(typeof exports === 'undefined');
   }
 
   var OnOrAfter = function OnOrAfter(firstDay) {
-    this.firstDay = firstDay;
+    this.firstDay = dateFromArg(firstDay);
   };
   OnOrAfter.prototype.isOccurring = function(aDate) {
     return this.firstDay <= beginningOfDay(aDate);
@@ -93,6 +99,7 @@ var isNodeJS = !(typeof exports === 'undefined');
       return onOrAfter;
     }
   };
+
   /**
    * Specifies an expression that matches a day and all days after that day.
    * @param {Date} firstDay - The first day to match
@@ -102,8 +109,10 @@ var isNodeJS = !(typeof exports === 'undefined');
   }
 
   /**
-   * Specifies an expression that matches a day and all days before that day.
-   * @param {Date} lastDay - The last day to match
+   * Specifies an expression that matches all days that do not match the
+   * expression given.
+   * @param {temporal expression} expression - The expression, created by one
+   * of the functions exported by TempEx.
    */
   var NegationOf = function NegationOf(expr) {
     this.expr = expr;
@@ -160,6 +169,7 @@ var isNodeJS = !(typeof exports === 'undefined');
     }
     return addDays(onOrAfter, daysToAdd);
   };
+
   /**
    * Specifies an expression that matches days in the week, e.g. Mondays and
    * Wednesday, but not all other week days.
@@ -169,7 +179,7 @@ var isNodeJS = !(typeof exports === 'undefined');
   exports.onWeekdays = function(days /* e.g. [ 0, 2, 3 ] for Sun,Tue,Wed */) {
     return new OnWeekdays(days);
   }
-  
+
   /**
    * 'rolling over' means to add 12 to each month in months that's less than month...
    */
@@ -255,9 +265,7 @@ var isNodeJS = !(typeof exports === 'undefined');
     var until = moment(onOrAfter);
     var daysDiff = until.diff(this.day, 'days');
     var weeksDiff = Math.floor(daysDiff / 7);
-    console.log('weeksDiff=' + weeksDiff);
     if ((weeksDiff % this.n) == 0) {
-      console.log('weeksDiff=' + weeksDiff);
       return moment(until.toDate()).toDate();
     } else {
       var nextWeekFromDay = weeksDiff - (weeksDiff % this.n) + this.n;
