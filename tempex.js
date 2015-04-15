@@ -133,6 +133,10 @@ var isNodeJS = !(typeof exports === 'undefined');
     return null;
   }
 
+  exports.negate = function(expression) {
+    return new NegationOf(expression);
+  }
+
   exports.onOrBefore = function(lastDay) {
     return new NegationOf(new OnOrAfter(addDays(lastDay, 1)));
   }
@@ -206,6 +210,11 @@ var isNodeJS = !(typeof exports === 'undefined');
       return onOrAfter;
     }
   };
+  InMonths.prototype.isOccurring = function(aDate) {
+    var next = this.nextOccurrence(aDate);
+    return next.getTime() == aDate.getTime();
+  };
+
   /** Match one or multiple months.
    * @param {Array} months - array of integers specifying months to match. 0=January, 1=February, etc.
    */
@@ -310,6 +319,36 @@ var isNodeJS = !(typeof exports === 'undefined');
     return true;
   };
 
+  var Union = function Union(expressions) {
+    this.unionOf = expressions;
+  }
+  Union.prototype.isOccurring = function(aDate) {
+    var i;
+    for (i = 0; i < this.unionOf.length; i++) {
+      if (this.unionOf[i].isOccurring(aDate)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  Union.prototype.nextOccurrence = function(onOrAfter, butNotLaterThan) {
+    var theNext;
+    var expressions = this.unionOf;
+    for (var i = 0; i < expressions.length; i++) {
+      var occurrence = expressions[i].nextOccurrence(onOrAfter, butNotLaterThan);
+      if (occurrence && occurrence < onOrAfter) {
+        throw new Error("invalid next occurrence: " + occurrence + " is less than " + onOrAfter);
+      }
+      if (!theNext || occurrence && occurrence < theNext) {
+        theNext = occurrence;
+      }
+    }
+    return theNext;
+  }
+  exports.union = function(expressions) {
+    return new Union(expressions);
+  };
+
   var IntersectionOf = function IntersectionOf(expr1, expr2) {
     this.expressions = [ expr1, expr2 ];
   };
@@ -343,18 +382,12 @@ var isNodeJS = !(typeof exports === 'undefined');
     return new IntersectionOf(expr1, expr2);
   };
 
-  var nextOccurrence = exports.nextOccurrence = function(expressions, onOrAfter, butNotLaterThan) {
-    var theNext = null;
-    for (var i = 0; i < expressions.length; i++) {
-      var occurrence = expressions[i].nextOccurrence(onOrAfter, butNotLaterThan);
-      if (occurrence && occurrence < onOrAfter) {
-        throw "invalid next occurrence: " + occurrence + " is less than " + onOrAfter;
-      }
-      if (!theNext || occurrence && occurrence < theNext) {
-        theNext = occurrence;
-      }
+  var nextOccurrence = exports.nextOccurrence = function(expression, onOrAfter, butNotLaterThan) {
+    var occurrence = expression.nextOccurrence(onOrAfter, butNotLaterThan);
+    if (occurrence && occurrence < onOrAfter) {
+      throw "invalid next occurrence: " + occurrence + " is less than " + onOrAfter;
     }
-    return theNext;
+    return occurrence;
   }
 
   /** Adds (or subtracts) days from a date given.
@@ -368,24 +401,20 @@ var isNodeJS = !(typeof exports === 'undefined');
     return r;
   }
 
-  exports.occurrences = function(expressions, from, to) {
-    if (!from || !(from instanceof Date) || !to || !(to instanceof Date)) {
-      throw "invalid arguments";
+  exports.occurrences = function(expression, from, to) {
+    if (!expression || !from || !(from instanceof Date) || !to || !(to instanceof Date)) {
+      throw new Error("invalid arguments");
     }
-    if (!expressions || expressions.length == 0) {
-      return [];
-    } else {
-      var result = [];
-      while(from <= to) {
-        occurrence = nextOccurrence(expressions, from, to);
-        if(!occurrence || occurrence > to) {
-          break;
-        }
-        result.push(occurrence);
-        from = beginningOfDay(addDays(occurrence, 1));
+    var result = [];
+    while(from <= to) {
+      occurrence = nextOccurrence(expression, from, to);
+      if(!occurrence || occurrence > to) {
+        break;
       }
-      return result;
+      result.push(occurrence);
+      from = beginningOfDay(addDays(occurrence, 1));
     }
+    return result;
   };
 
 })(isNodeJS ? exports : this['TempEx']={}, isNodeJS ? require('moment') : moment);

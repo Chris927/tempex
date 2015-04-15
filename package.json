@@ -16,8 +16,8 @@
     "temporal",
     "expressions"
   ],
-  "author": "Chris Oloff <chris@uber5.com> (https://uber5.com/)",
-  "license": "ISC",
+  "author": "Chris Oloff <chris@uber5.com> (http://uber5.com/)",
+  "license": "proprietary",
   "dependencies": {
     "moment": "^2.9.0"
   }
