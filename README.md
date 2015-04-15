@@ -1,5 +1,7 @@
 # Temporal Expressions in Javascript
 
+## Introduction
+
 Temporal expressions allow defining and querying recurring events on calendars.
 This little library roughly follows the ideas of [Martin Fowler's
 article](http://martinfowler.com/apsupp/recurring.pdf) about recurring events.
@@ -87,3 +89,7 @@ will give us the occurrences:
   Sat Jun 20 2015 00:00:00 GMT+0200 (SAST),
   Sat Jun 27 2015 00:00:00 GMT+0200 (SAST) ]
 ```
+
+## API Documentation
+
+Is [here](http://chris927.github.io/tempex/).
