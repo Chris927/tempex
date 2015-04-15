@@ -1,5 +1,7 @@
 # Temporal Expressions in Javascript
 
+[![Build Status](https://travis-ci.org/Chris927/tempex.svg?branch=master)](https://travis-ci.org/Chris927/tempex)
+
 ## Introduction
 
 Temporal expressions allow defining and querying recurring events on calendars.
