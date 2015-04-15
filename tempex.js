@@ -108,12 +108,6 @@ var isNodeJS = !(typeof exports === 'undefined');
     return new OnOrAfter(firstDay);
   }
 
-  /**
-   * Specifies an expression that matches all days that do not match the
-   * expression given.
-   * @param {temporal expression} expression - The expression, created by one
-   * of the functions exported by TempEx.
-   */
   var NegationOf = function NegationOf(expr) {
     this.expr = expr;
   }
@@ -133,14 +127,29 @@ var isNodeJS = !(typeof exports === 'undefined');
     return null;
   }
 
+  /**
+   * Specifies an expression that matches all days that do not match the
+   * expression given.
+   * @param {Object} expr - The expression, created by one
+   * of the functions exported by TempEx.
+   */
   exports.negate = function(expression) {
     return new NegationOf(expression);
   }
 
+  /**
+   * Specifies an expression that matches all days up to and including lastDay.
+   * @param {Date} lastDay - last day to be matched.
+   */
   exports.onOrBefore = function(lastDay) {
     return new NegationOf(new OnOrAfter(addDays(lastDay, 1)));
   }
 
+  /**
+   * Specifies an expression that matches all days that are not in a list of
+   * given days.
+   * @param {Array} dates - array of Date instances
+   */
   exports.notOnSpecificDates = function(dates) {
     return new NegationOf(new OnSpecificDates(dates));
   }
@@ -216,7 +225,8 @@ var isNodeJS = !(typeof exports === 'undefined');
   };
 
   /** Match one or multiple months.
-   * @param {Array} months - array of integers specifying months to match. 0=January, 1=February, etc.
+   * @param {Array} months - array of integers specifying months to match.
+   * 0=January, 1=February, etc.
    */
   exports.months = function(months) {
     return new InMonths(months);
@@ -234,6 +244,7 @@ var isNodeJS = !(typeof exports === 'undefined');
       return next;
     }
   };
+
   /** Matches based on the calendar day in the month
    * @param {int} day - the Day in the month, e.g. 11 for the 11th day of the month
    */
@@ -257,6 +268,7 @@ var isNodeJS = !(typeof exports === 'undefined');
       return targetDateThisMonth;
     }
   }
+
   /** Matches based on the day of the week in the month.
    * @param {int} day - the day of the week, 0=Sunday, 1=Monday, etc.
    * @param {int} nth - If 1, it will match the first day (e.g. first Sunday)
@@ -345,6 +357,13 @@ var isNodeJS = !(typeof exports === 'undefined');
     }
     return theNext;
   }
+
+  /**
+   * Matches the union of the expressions given: If any of the expressions
+   * provided matches, then it is a match.
+   * @param {Array} expressions - array of expressions, as created by one of
+   * the factory functions of TempEx.
+   */
   exports.union = function(expressions) {
     return new Union(expressions);
   };
@@ -374,9 +393,10 @@ var isNodeJS = !(typeof exports === 'undefined');
     }
     return null;
   };
-  /** Specifies an intersection of two expression. Only those days will match this expression that match both (sub) expressions.
-   * @param {expression} expr1 - first expression
-   * @param {expression} expr2 - second expression
+  /** Specifies an intersection of two expression. Only those days will match
+   * this expression that match both (sub) expressions.
+   * @param {Object} expr1 - first expression
+   * @param {Object} expr2 - second expression
    */
   exports.intersectionOf = function(expr1, expr2) {
     return new IntersectionOf(expr1, expr2);
@@ -401,6 +421,13 @@ var isNodeJS = !(typeof exports === 'undefined');
     return r;
   }
 
+  /**
+   * Given a time interval (date range), determines all occurrences (days)
+   * within the interval for the given expression.
+   * @param {Object} expression - An expression created by one of the factory functions
+   * @param {Date} from - start of time interval
+   * @param {Date} to - end of time interval
+   */
   exports.occurrences = function(expression, from, to) {
     if (!expression || !from || !(from instanceof Date) || !to || !(to instanceof Date)) {
       throw new Error("invalid arguments");

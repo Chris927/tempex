@@ -240,7 +240,6 @@ describe("other temporal expressions", function() {
       var inMonths = t.months([7, 9]);
       var onWeekdays = t.onWeekdays([ 3, 4 ]);
       var occurrences = t.occurrences(t.intersectionOf(t.negate(inMonths), onWeekdays), now, inOneYear);
-      console.log('occurrences', occurrences);
       expect(occurrences.length).toEqual(87);
       // TODO: should assert more?
     });
