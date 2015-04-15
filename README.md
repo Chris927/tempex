@@ -61,10 +61,13 @@ will produce:
 
 If we want to express that there won't be races during the Easter holidays:
 
-``
-var holidays = t.intersectionOf( t.onOrAfter(new Date(2015, 2, 30)), t.onOrBefore(new Date(2015, 3, 17)))
+```
+var holidays = t.intersectionOf(
+  t.onOrAfter(new Date(2015, 2, 30)),
+  t.onOrBefore(new Date(2015, 3, 17))
+)
 var raceDays = t.intersectionOf(raceSchedule, t.negate(holidays))
-``
+```
 
 Then
 
