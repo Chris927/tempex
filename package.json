@@ -1,6 +1,6 @@
 {
   "name": "tempex",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "temporal expressions, somehow similar to Martin Fowler's",
   "main": "tempex.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@bitbucket.org:chris_o/tempex.git"
+    "url": "git@github.com:Chris927/tempex.git"
   },
   "keywords": [
     "time",
